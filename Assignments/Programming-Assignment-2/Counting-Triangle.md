@@ -1,3 +1,6 @@
+# Clustering Coefficient 聚集系数的计算
+
+
 # Naive algorithm
 
 ![alt text](./images/parallel-version.png)
@@ -11,7 +14,8 @@
 ### Raw data
 数字表示结点，一对数字，表示这两个节点之间有一条边。
 
-## 用OOD其实不高效
+## 用OOD其实不高效?
+https://javadeveloperzone.com/hadoop/hadoop-create-custom-key-writable-example/
 
 ## Mapper 0
 - emit(<Red, Blue>)
@@ -49,57 +53,41 @@
     - 3,1     $
     - 2,1     3
 
+- Output: combine all the edges as primary keys.
+
+
+### Reducer 1
+- Input: <(v1, v2), [u1, u2, ... , uk]> or <(v1, v2), [u1, u2, ... , uk, $]>
+
 ```
-    if input type is <(v1, v2), vertex>:
-        if (v1, v2) is actual edge:
-            emit(<vertex, 1>)
+flag = false    // a boolean variable. True if (v1,v2) is an actual edge
+for each value in values: 
+    if value is "$":
+        flag = true
+
+int size = values.length
+if flag is true:
+    for ( i = 0; i < size; i++ )
+        for ( j = i + 1; j < size; j++ ) 
+            emit(value, 1)      
+    
 ```
-
-## Reducer 1
-- Worker1(<Red, [Blue, Black, Green]>): 
-    1. emit(<(Blue, Black), Red>)
-    2. emit(<(Blue, Green), Red>)
-    3. emit(<(Black, Green), Red>)
-
-- Worker2(<Blue, [Red]>):
-    emit nothing
-
-- Worker3(<Black, [Red, Green]>):
-    1. emit(<(Red, Green), Black>)
-
-- Worker4(<Green, [Red, Black]>):
-    1. emit(<(Red, Black), Green>)
 
 ## Mapper 2
-- Worker1(<(Blue, Black), Red>):
-    - (Blue, Black) is not an edge -> emit(<(Blue, Black), Red>)
-
-- Worker2(<(Blue, Green), Red>):
-    - (Blue, Green) is not an edge -> emit(<(Blue, Green), Red>)
-
-- Worker3(<(Black, Green), Red>):
-    - (Black, Green) is an edge -> emit(<(Black, Green), Red, $>)
-
-- Worker4(<(Red, Green), Black>):
-    - (Red, Green) is an edge -> emit(<(Red, Green), Black, $>)
-
-- Worker5(<(Red, Black), Green>):
-    - (Red, Black) is an edge -> emit(<(Red, Black), Green, $>)
+- Input: <vertex, 1>
+- emit<vertex, 1>
 
 ## Reducer2
-- Worker1
+- Input: <vertex, [1, 1, 1, ... , 1]>
 
+```
+int count = 0
+for each value in values: 
+    count += value
 
-- Worker3(<(Black, Green), Red, $>):
-    emit(Red, 1)
+emit(vertex, value)
 
-- Worker4(<(Red, Green), Black, $>):
-    emit(Black, 1)
-
-- Worker5(<(Red, Black), Green, $>):
-    emit(Green, 1)
-
-## Result
+```
 
 
 

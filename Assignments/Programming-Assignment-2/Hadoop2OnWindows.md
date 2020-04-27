@@ -2,6 +2,8 @@
 
 Setting up a Single Node Cluster.
 
+这个不管用，别看了。
+
 ## Purpose
 This document describes how to set up and configure **a single-node Hadoop installation** so that you can quickly perform simple operations using Hadoop MapReduce and the Hadoop Distributed File System (HDFS).
 
